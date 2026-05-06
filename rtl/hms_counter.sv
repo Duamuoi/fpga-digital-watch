@@ -28,7 +28,7 @@ module hms_counter #(
   assign minute_rollover = second_rollover && (minutes == MaxMinutes);
 
   up_down_counter #(
-      .MAX  (MaxHours),
+      .MAX  (int'(MaxHours)),
       .WIDTH(W_HOURS)
   ) u_hour (
       .clk(clk),
@@ -38,7 +38,7 @@ module hms_counter #(
   );
 
   up_down_counter #(
-      .MAX  (MaxMinutes),
+      .MAX  (int'(MaxMinutes)),
       .WIDTH(W_MINUTES)
   ) u_minute (
       .clk(clk),
@@ -48,7 +48,7 @@ module hms_counter #(
   );
 
   up_down_counter #(
-      .MAX  (MaxSeconds),
+      .MAX  (int'(MaxSeconds)),
       .WIDTH(W_SECONDS)
   ) u_second (
       .clk(clk),
