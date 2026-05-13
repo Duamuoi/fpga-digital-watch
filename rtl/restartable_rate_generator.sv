@@ -38,10 +38,11 @@ module restartable_rate_generator #(
           .count(count)
       );
 
-      assign rst_count    = ~run;
+      assign rst_count = ~run;
       assign enable_count = run;
 
       assign tick_qualifier = count == CountWidth'(CYCLE_COUNT - 1);
+
 
     end else begin : g_special
 

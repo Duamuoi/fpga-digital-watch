@@ -12,8 +12,7 @@ module up_down_counter #(
 
   logic [WIDTH-1:0] next_count;
 
-  always_ff @(posedge clk)
-   if (enable) count <= next_count;
+  always_ff @(posedge clk) if (enable) count <= next_count;
 
   always_comb begin
     if (up) begin
