@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------
 `timescale 1ns / 1ps
 
-module user_top_watch_v3 #(
+module user_top_watch_v4 #(
     /* verilator lint_off UNUSEDPARAM */
     parameter int CYCLES_PER_SECOND = 50_000_000
     /* verilator lint_on UNUSEDPARAM */
@@ -82,12 +82,29 @@ module user_top_watch_v3 #(
       .count(hours)
   );
 
+  // -------------------------
+  // Seconds Tick Realignment
+  // -------------------------
+
+  logic edit_button_press;
+  logic realign_seconds_tick;
+  logic seconds_rate_run;
+
+  rising_edge_detector u_edit_button_edge (
+      .clk(clk),
+      .sig_in(button[3]),
+      .rise(edit_button_press)
+  );
+
+  assign realign_seconds_tick = mode_enable[0] && edit_button_press;
+  assign seconds_rate_run     = ~realign_seconds_tick;
+
   // Derive 1Hz tick from system clock
   restartable_rate_generator #(
       .CYCLE_COUNT(CYCLES_PER_SECOND)
   ) u_divider_1_Hz (
       .clk (clk),
-      .run (1'b1),
+      .run (seconds_rate_run),
       .tick(seconds_tick)
   );
 
