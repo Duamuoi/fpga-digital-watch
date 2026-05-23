@@ -4,7 +4,7 @@ module arming_latch (
     input  logic clk,
     input  logic arm,
     input  logic disarm,
-    output logic armed
+    output logic armed = 1'b0
 );
 
     always_ff @(posedge clk) begin

@@ -11,7 +11,15 @@ module restartable_rate_generator #(
   // Becomes high at the end of each cycle
   logic tick_qualifier;
 
-  assign tick = run && tick_qualifier;
+  // Capture run as part of the FSM state
+  logic running = 1'b0;
+
+  always_ff @(posedge clk) begin
+    running <= run;
+  end
+
+  // Moore-style output: depends on registered state, not raw run
+  assign tick = running && tick_qualifier;
 
   generate
     if (CYCLE_COUNT > 1) begin : g_general
@@ -32,11 +40,10 @@ module restartable_rate_generator #(
           .count(count)
       );
 
-      assign rst_count = ~run;
+      assign rst_count    = ~run;
       assign enable_count = run;
 
       assign tick_qualifier = count == CountWidth'(CYCLE_COUNT - 1);
-
 
     end else begin : g_special
 
