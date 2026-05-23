@@ -8,16 +8,10 @@ module restartable_rate_generator #(
     output logic tick
 );
 
-  logic running = 1'b0;
-
-  always_ff @(posedge clk) begin
-    running <= run;
-  end
-
   // Becomes high at the end of each cycle
   logic tick_qualifier;
 
-  assign tick = running && tick_qualifier;
+  assign tick = run && tick_qualifier;
 
   generate
     if (CYCLE_COUNT > 1) begin : g_general
