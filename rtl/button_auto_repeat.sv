@@ -10,32 +10,44 @@ module button_auto_repeat #(
     output logic pulse
 );
 
-    logic rise;
-    logic held;
-    logic pulse_train;
+  logic rise;
+  logic held;
+  logic hold_pulse;
+  logic pulse_train;
+  logic repeat_run;
 
-    assign pulse = rise | (button & pulse_train);
+  assign repeat_run = held && !hold_pulse;
 
-    rising_edge_detector u_rise_detector (
-        .clk(clk),
-        .sig_in(button),
-        .rise(rise)
-    );
+  assign pulse = rise | hold_pulse | (held & pulse_train);
 
-    button_hold_detect #(
-        .HOLD_CYCLES(HOLD_CYCLES)
-    ) u_hold_detect (
-        .clk(clk),
-        .button(button),
-        .held(held)
-    );
+  rising_edge_detector u_rise_detector (
+      .clk(clk),
+      .sig_in(button),
+      .rise(rise)
+  );
 
-    restartable_rate_generator #(
-        .CYCLE_COUNT(REPEAT_CYCLES)
-    ) u_repeat_rate (
-        .clk(clk),
-        .run(held),
-        .tick(pulse_train)
-    );
+  button_hold_detect #(
+      .HOLD_CYCLES(HOLD_CYCLES)
+  ) u_hold_detect (
+      .clk(clk),
+      .button(button),
+      .held(held)
+  );
+
+  button_hold_pulse #(
+      .HOLD_CYCLES(HOLD_CYCLES)
+  ) u_hold_pulse (
+      .clk(clk),
+      .button(button),
+      .pulse(hold_pulse)
+  );
+
+  restartable_rate_generator #(
+      .CYCLE_COUNT(REPEAT_CYCLES)
+  ) u_repeat_rate (
+      .clk (clk),
+      .run (repeat_run),
+      .tick(pulse_train)
+  );
 
 endmodule

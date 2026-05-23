@@ -144,11 +144,14 @@ module user_top_watch_v4 #(
   logic inc_event;
   logic dec_event;
 
+  localparam int Edithold = (CYCLES_PER_SECOND / 2) + 1;
+  localparam int Editrepeat = CYCLES_PER_SECOND / 10;
+
   assign edit_active = |mode_enable;
 
   button_auto_repeat #(
-      .HOLD_CYCLES  (CYCLES_PER_SECOND / 2),
-      .REPEAT_CYCLES(CYCLES_PER_SECOND / 10)
+      .HOLD_CYCLES  (Edithold),
+      .REPEAT_CYCLES(Editrepeat)
   ) u_inc_repeat (
       .clk(clk),
       .button(button[1] & edit_active),
@@ -156,8 +159,8 @@ module user_top_watch_v4 #(
   );
 
   button_auto_repeat #(
-      .HOLD_CYCLES  (CYCLES_PER_SECOND / 2),
-      .REPEAT_CYCLES(CYCLES_PER_SECOND / 10)
+      .HOLD_CYCLES  (Edithold),
+      .REPEAT_CYCLES(Editrepeat)
   ) u_dec_repeat (
       .clk(clk),
       .button(button[0] & edit_active),
@@ -171,7 +174,6 @@ module user_top_watch_v4 #(
   assign seconds_dec   = mode_enable[0] && dec_event;
   assign minutes_dec   = mode_enable[1] && dec_event;
   assign hours_dec     = mode_enable[2] && dec_event;
-
 
   assign minutes_tick  = seconds_tick && (seconds == 6'd59);
   assign hours_tick    = seconds_tick && (seconds == 6'd59) && (minutes == 6'd59);
